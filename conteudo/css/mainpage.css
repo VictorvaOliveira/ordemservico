@@ -1,0 +1,19 @@
+body{
+    color: aqua;
+}
+
+table 
+    {
+        border-radius: 10px;
+        background-color: white;
+        border-style: solid;
+        border-color: black;
+    }
+
+p 
+    {
+        color: white;
+    }
+label{
+    text-align: left;
+}
