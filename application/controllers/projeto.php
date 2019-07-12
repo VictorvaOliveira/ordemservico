@@ -55,7 +55,15 @@ class Projeto extends CI_Controller
 	//Função para atualizar ordem de serviço
 	public function atualizar($id = null)
 	{
+		$ordemservico = $this->sistema_model->getOneOs($id);
 		$data_recente = $this->sistema_model->data_recente($id);
+
+		foreach ($ordemservico as $os) {
+			$identificador = $os->id;
+			$equipamento = $os->equipamento;
+			$servico = $os->servico;
+		}
+
 		foreach ($data_recente as $dt) {
 			$data = $dt->data_servico_update;
 		}
@@ -75,11 +83,13 @@ class Projeto extends CI_Controller
 			$dataupdate->add(new DateInterval('P1M'));
 		}
 
-		$dataformatada = $dataupdate->format("Y-m-d");
+		$datarealizacao = date("Y-m-d");
+		$data_prox_servico = $dataupdate->format("Y-m-d");
 
 		$status = "Fechado";
-
-		if ($this->sistema_model->atualizarOs($id, $status, $dataformatada)) {
+		$staus_prox_servico = "Em aberto";
+		if ($this->sistema_model->atualizarOs($id, $status, $datarealizacao, $data_prox_servico, $staus_prox_servico)) {
+			$this->sistema_model->logOrdemServico($identificador, $equipamento, $servico, $datarealizacao);
 			$this->session->set_flashdata(
 				'atualizar-ok',
 				'<div class="col-md-10">
@@ -92,5 +102,11 @@ class Projeto extends CI_Controller
 
 			redirect("");
 		}
+	}
+
+	public function historico_index(){
+
+		$data['historicoOs'] = $this->sistema_model->historicoOrdemServico();
+		$this->load->view("historico", $data);
 	}
 }

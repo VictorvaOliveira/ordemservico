@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ordem de Serviço</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <!--<script type="text/javascript" scr="conteudo/js/sortTable.js"></script>
+   <link rel="stylesheet" href="conteudo/css/mainpage.css"> -->
+</head>
+<style>
+    footer {
+        background-color: #2d2d30;
+        color: #f5f5f5;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/ordemservico">Ordem de serviço</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8">
+                <p />
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-addon">Código OS</span>
+                    <input type="text" name="inputID" id="inputID" onkeyup="pesquisaID()" class="form-control" placeholder="Exemplo: 1, 2, 3">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-md-1">
+                <p></p>
+            </div>
+            <div class="col-md-10">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="tableOS">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Equipamento</th>
+                                <th>Serviço</th>
+                                <th>Data realização</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            if (!empty($historicoOs)) {
+                                foreach ($historicoOs as $lista) {
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $lista->id ?></td>
+                                        <td><?php echo $lista->equipamento ?></td>
+                                        <td><?php echo $lista->servico ?></td>
+                                        <td><?php echo date("d/m/Y", strtotime($lista->data_realizacao)); ?></td>
+                                    </tr>
+                                <?php }
+                            } else {
+                                echo "<tr><td class='text-center'>Não manutenção prevista para hoje !</td></tr>";
+                            } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center navbar-fixed-bottom">Ordem de Serviço</footer>
+</body>
+<script>
+    function pesquisaID() {
+
+        var input, filter, table, tr, td, i, txtValue;
+
+        input = document.getElementById("inputID");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("tableOS");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none"
+                }
+            }
+        }
+    }
+</script>
+
+</html>

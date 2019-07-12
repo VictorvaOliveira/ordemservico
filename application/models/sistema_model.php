@@ -16,7 +16,9 @@ class Sistema_Model extends CI_Model
 		date_default_timezone_set("America/Recife");
 		//
 		$dataAtual = date('Y-m-d');
-		//$this->db->where('data_servico_update', $dataAtual);
+//		$this->db->where('data_proximo_servico', $dataAtual);
+//		$this->db->where('data_proximo_servico', '2019-07-10');
+
 		return $this->db->get('od_ordem_de_servico')->result();
 	}
 
@@ -31,17 +33,19 @@ class Sistema_Model extends CI_Model
 		return $this->db->insert('od_ordem_de_servico', $dados);
 	}
 
-	public function atualizarOs($id, $status, $dataformatada)
+	public function atualizarOs($id, $status, $datarealizacao, $data_prox_servico, $staus_prox_servico)
 	{
 		$this->db->where('id', $id);
-		$this->db->set('data_servico_update', $dataformatada);
+		$this->db->set('data_servico_update', $datarealizacao);
+		$this->db->set('data_proximo_servico', $data_prox_servico);
+		$this->db->set('status_proximo_servico', $staus_prox_servico);
 		$this->db->set('status', $status);
 		return $this->db->update('od_ordem_de_servico');
 	}
 
 	public function data_recente($id)
 	{
-		$query = $this->db->query("SELECT `data_servico_update` FROM `od_ordem_de_servico` where id = $id")->result();
+		$query = $this->db->query("SELECT `data_pedido` FROM `od_ordem_de_servico` where id = $id")->result();
 		return $query;
 	}
 
@@ -49,5 +53,22 @@ class Sistema_Model extends CI_Model
 	{
 		$query = $this->db->query("SELECT `periodo` FROM `od_ordem_de_servico` where id = $id")->result();
 		return $query;
+	}
+
+	public function getOneOs($id){
+		$this->db->where("id", $id);
+		return $this->db->get("od_ordem_de_servico")->result();
+	}
+
+	public function logOrdemServico($identificador, $equipamento, $servico, $datarealizacao){
+		$dados['id'] = $identificador;
+		$dados['equipamento'] = $equipamento;
+		$dados['servico'] = $servico;
+		$dados['data_realizacao'] = $datarealizacao;
+		return $this->db->insert("log_ordem_de_servico", $dados);
+	}
+
+	public function historicoOrdemServico(){
+		return $this->db->get('log_ordem_de_servico')->result();
 	}
 }

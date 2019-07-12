@@ -17,9 +17,10 @@
   }
 
   footer {
-    background-color: #2d2d30;
-    color: white;
-  }
+        background-color: #2d2d30;
+        color: #f5f5f5;
+        padding: 10px;
+    }
 </style>
 
 <body>
@@ -32,6 +33,9 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="/ordemservico">Ordem de serviço</a>
+        <ul class="nav navbar-nav">
+          <li><a href="projeto/historico_index">Histórico de serviço</a></li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -78,9 +82,8 @@
                 <th>Código</th>
                 <th>Equipamento</th>
                 <th>Serviço</th>
-                <th>Data pedido</th>
-                <th>Data realização</th>
-                <th onclick="ordenarStatus(5)">Status</th>
+                <th>Data prevista</th>
+                <th onclick="ordenarStatus(4)">Status</th>
                 <th></th>
               </tr>
             </thead>
@@ -93,9 +96,9 @@
                     <td><?php echo $lista->id ?></td>
                     <td><?php echo $lista->equipamento ?></td>
                     <td><?php echo $lista->servico ?></td>
-                    <td><?php echo $lista->data_pedido ?></td>
-                    <td><?php echo $lista->data_servico_update ?></td>
-                    <td><?php echo $lista->status ?></td>
+                    <td><?php echo date("d/m/Y", strtotime($lista->data_proximo_servico)); ?></td>
+                    <!-- <td><?php echo $lista->data_proximo_servico; ?></td> -->
+                    <td><?php echo $lista->status_proximo_servico ?></td>
                     <td><?php echo "<a href='projeto/atualizar/$lista->id' class='btn btn-success' data-toggle='tooltip' title='Confirmar'><span class='glyphicon glyphicon-ok'></span></a>"; ?></td>
                   </tr>
                 <?php }
@@ -109,7 +112,7 @@
     </div>
   </div>
 
-  <footer class="text-center">Ordem de Serviço</footer>
+  <footer class="text-center navbar-fixed-botton">Ordem de Serviço</footer>
 
 </body>
 <script>
