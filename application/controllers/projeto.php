@@ -45,8 +45,9 @@ class Projeto extends CI_Controller
 						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 						Ordem de serviço adicionada !
 					</div>
-				</div>');
-				
+				</div>'
+			);
+
 			redirect("");
 		}
 	}
@@ -54,10 +55,31 @@ class Projeto extends CI_Controller
 	//Função para atualizar ordem de serviço
 	public function atualizar($id = null)
 	{
+		$data_recente = $this->sistema_model->data_recente($id);
+		foreach ($data_recente as $dt) {
+			$data = $dt->data_servico_update;
+		}
+
+		$periodo = $this->sistema_model->periodo_servico($id);
+		foreach ($periodo as $pd) {
+			$periodo_servico = $pd->periodo;
+		}
+
+		$dataupdate = new DateTime($data);
+
+		if ($periodo_servico == 'd') {
+			$dataupdate->add(new DateInterval('P1D'));
+		} else if ($periodo_servico == 's') {
+			$dataupdate->add(new DateInterval('P7D'));
+		} else if ($periodo_servico == 'm') {
+			$dataupdate->add(new DateInterval('P1M'));
+		}
+
+		$dataformatada = $dataupdate->format("Y-m-d");
 
 		$status = "Fechado";
 
-		if ($this->sistema_model->atualizarOs($id, $status)) {
+		if ($this->sistema_model->atualizarOs($id, $status, $dataformatada)) {
 			$this->session->set_flashdata(
 				'atualizar-ok',
 				'<div class="col-md-10">
@@ -65,7 +87,8 @@ class Projeto extends CI_Controller
 						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 						Ordem de serviço atualizada !
 					</div>
-				</div>');
+				</div>'
+			);
 
 			redirect("");
 		}
