@@ -42,6 +42,11 @@
         <div class="panel panel-default">
           <div class="panel-heading">Cadastro de ordem de serviço</div>
           <div class="panel-body">
+            <?php 
+              echo validation_errors("<div class='alert alert-danger alert-dismissible'>
+              <a href='#'class='close' data-dismiss='alert' aria-label='close'>&times;</a>"
+              , "</div>");
+            ?>
             <form action="salvar" class="form-horizontal" method="post" id="form">
               <div class="form-group">
                 <label for="id" class="control-label col-sm-2">Identificador:</label>

@@ -29,23 +29,46 @@ class Projeto extends CI_Controller
 	//Salvar ordem de serviço
 	public function salvar()
 	{
-		$id        = $this->input->post('id');
+		//Carregando biblioteca
+		$this->load->library("form_validation");
+		//Recebendo os valores do inputs
+		$id = $this->input->post('id');
 		$equipamento = $this->input->post('equipamento');
 		$servico = $this->input->post('describe');
 		$dateOpen  = $this->input->post('dateOpen');
 		$periodo = $this->input->post('periodo');
 		$status    = "Em aberto";
-		if ($this->sistema_model->addOs($id, $equipamento, $servico, $dateOpen, $periodo, $status)) {
-			$data['listaos'] = $this->sistema_model->lista_os();
-			$data["msg"] = "O cadastro efetuado com sucesso!";
+		//Criando regra de validação
+		$this->form_validation->set_rules(
+			'id',
+			'Código Ordem de serviço',
+			'is_unique[od_ordem_de_servico.id]'
+		);
+
+		//Convertendo date do form em datetime
+		$data = new DateTime($dateOpen);
+		//Previsão do próximo serviço
+		if ($periodo == 'd') {
+			$data->add(new DateInterval('P1D'));
+		} else if ($periodo == 's') {
+			$data->add(new DateInterval('P7D'));
+		} else if ($periodo == 'm') {
+			$data->add(new DateInterval('P1M'));
+		}
+		//Data prevista
+		$dataPrevista = $data->format("Y-m-d");
+		if ($this->form_validation->run() == FALSE) {
+			$this->cadastro();
+		} else {
+			$this->sistema_model->addOs($id, $equipamento, $servico, $dateOpen, $dataPrevista, $periodo, $status);
 			$this->session->set_flashdata(
 				'cadastro-ok',
 				'<div class="col-md-10">
-					<div class="alert alert-success alert-dismissible">
-						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-						Ordem de serviço adicionada !
-					</div>
-				</div>'
+						<div class="alert alert-success alert-dismissible">
+								<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+								Ordem de serviço adicionada !
+							</div>
+						</div>'
 			);
 
 			redirect("");
@@ -56,21 +79,13 @@ class Projeto extends CI_Controller
 	public function atualizar($id = null)
 	{
 		$ordemservico = $this->sistema_model->getOneOs($id);
-		$data_recente = $this->sistema_model->data_recente($id);
 
 		foreach ($ordemservico as $os) {
 			$identificador = $os->id;
 			$equipamento = $os->equipamento;
 			$servico = $os->servico;
-		}
-
-		foreach ($data_recente as $dt) {
-			$data = $dt->data_servico_update;
-		}
-
-		$periodo = $this->sistema_model->periodo_servico($id);
-		foreach ($periodo as $pd) {
-			$periodo_servico = $pd->periodo;
+			$data = $os->data_proximo_servico;
+			$periodo_servico = $os->periodo;
 		}
 
 		$dataupdate = new DateTime($data);
@@ -104,9 +119,43 @@ class Projeto extends CI_Controller
 		}
 	}
 
-	public function historico_index(){
+	//FUNÇÃO PARA RECUPERAR O HISTÓRICO DE SERVIÇOS 
+	public function historico_index()
+	{
 
 		$data['historicoOs'] = $this->sistema_model->historicoOrdemServico();
 		$this->load->view("historico", $data);
+	}
+
+	//FUNÇÃO PARA EXPORTAR DADOS
+	public function exportarDados()
+	{
+
+		$filename = 'historico';
+		$output = "";
+		//Recuperando histórico de serviços
+		$historico = $this->sistema_model->historicoOrdemServico();
+
+		$output .= '<table border=2>
+			<tr>
+				<th>Identificador</th>
+				<th>Equipamento</th>
+				<th>Serviço</th>
+				<th>Data Realização</th>
+			</tr>';
+		foreach ($historico as $ht) {
+			$output .= '<tr>
+			<td>' . $ht->id . '</td>
+			<td>' . $ht->equipamento . '</td>
+			<td>' . $ht->servico . '</td>
+			<td>' . $ht->data_realizacao . '</td>
+				</tr>';
+		}
+		$output .= '</table>';
+		// Força o Download do Arquivo Gerado
+		header("Content-Type: application/xsl");
+		header("Content-Disposition: attachment; filename=$filename.xls");
+
+		echo $output;
 	}
 }

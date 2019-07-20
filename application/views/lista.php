@@ -6,7 +6,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
   <!--<script type="text/javascript" scr="conteudo/js/sortTable.js"></script>
    <link rel="stylesheet" href="conteudo/css/mainpage.css"> -->
@@ -17,10 +19,10 @@
   }
 
   footer {
-        background-color: #2d2d30;
-        color: #f5f5f5;
-        padding: 10px;
-    }
+    background-color: #2d2d30;
+    color: #f5f5f5;
+    padding: 10px;
+  }
 </style>
 
 <body>
@@ -36,6 +38,9 @@
         <ul class="nav navbar-nav">
           <li><a href="projeto/historico_index">Histórico de serviço</a></li>
         </ul>
+        <ul class="nav navbar-nav">
+          <li><a href="projeto/all_ordem_servico">Todas as ordens de serviço</a></li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -46,12 +51,12 @@
       <div class="col-md-5">
         <a href="projeto/cadastro" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> Nova Ordem de Serviço</a>
       </div>
-      <div class="col-md-2">
+      <div class="col-md-1">
         <p />
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="input-group">
-          <span class="input-group-addon">Código OS</span>
+          <span class="input-group-addon">Código Ordem de Serviço</span>
           <input type="text" name="inputID" id="inputID" onkeyup="pesquisaID()" class="form-control" placeholder="Exemplo: 1, 2, 3">
         </div>
       </div>
@@ -102,18 +107,17 @@
                     <td><?php echo "<a href='projeto/atualizar/$lista->id' class='btn btn-success' data-toggle='tooltip' title='Confirmar'><span class='glyphicon glyphicon-ok'></span></a>"; ?></td>
                   </tr>
                 <?php }
-              } else {
-                echo "<tr><td class='text-center'>Não manutenção prevista para hoje !</td></tr>";
-              } ?>
-            </tbody>
+              } else { ?>
+              </tbody>
+            </table>
+            <span class="col-md-12 text-center">Não há manutenção para hoje !</span>
+          <?php } ?>
+          </tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
-
-  <footer class="text-center navbar-fixed-botton">Ordem de Serviço</footer>
-
 </body>
 <script>
   function ordenarStatus(n) {
