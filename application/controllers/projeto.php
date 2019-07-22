@@ -127,35 +127,32 @@ class Projeto extends CI_Controller
 		$this->load->view("historico", $data);
 	}
 
-	//FUNÇÃO PARA EXPORTAR DADOS
-	public function exportarDados()
+	public function all_ordem_servico()
 	{
+		$data['getAllOs'] = $this->sistema_model->getAll();
+		$this->load->view("allos", $data);
+	}
 
-		$filename = 'historico';
-		$output = "";
-		//Recuperando histórico de serviços
-		$historico = $this->sistema_model->historicoOrdemServico();
+	public function editar($id = null)
+	{
+		$data['getone'] = $this->sistema_model->getOne($id);
+		$this->load->view("editar", $data);
+	}
 
-		$output .= '<table border=2>
-			<tr>
-				<th>Identificador</th>
-				<th>Equipamento</th>
-				<th>Serviço</th>
-				<th>Data Realização</th>
-			</tr>';
-		foreach ($historico as $ht) {
-			$output .= '<tr>
-			<td>' . $ht->id . '</td>
-			<td>' . $ht->equipamento . '</td>
-			<td>' . $ht->servico . '</td>
-			<td>' . $ht->data_realizacao . '</td>
-				</tr>';
+	public function excluir($id = null)
+	{
+		if ($this->sistema_model->remove($id)) {
+			$this->session->set_flashdata(
+				'exclusao-ok',
+				'<div class="col-md-10">
+				<div class="alert alert-success alert-dismissible">
+					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+					Ordem de serviço excluída !
+				</div>
+			</div>'
+			);
+
+			$this->all_ordem_servico();
 		}
-		$output .= '</table>';
-		// Força o Download do Arquivo Gerado
-		header("Content-Type: application/xsl");
-		header("Content-Disposition: attachment; filename=$filename.xls");
-
-		echo $output;
 	}
 }

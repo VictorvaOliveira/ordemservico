@@ -45,12 +45,6 @@
             <div class="col-md-1">
                 <p></p>
             </div>
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-addon">Código Ordem de Serviço</span>
-                    <input type="text" name="inputID" id="inputID" onkeyup="pesquisaID()" class="form-control" placeholder="Exemplo: 1, 2, 3">
-                </div>
-            </div>
         </div>
     </div>
     <div class="container-fluid">
@@ -93,35 +87,13 @@
     </div>
 </body>
 <script>
-    function pesquisaID() {
-
-        var input, filter, table, tr, td, i, txtValue;
-
-        input = document.getElementById("inputID");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("tableOS");
-        tr = table.getElementsByTagName("tr");
-
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[0];
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none"
-                }
-            }
-        }
-    }
-
     $(document).ready(function() {
         $('#tableOS').DataTable({
-            "searching": false,
             "language": {
                 "lengthMenu": "_MENU_ Ordens de serviço por página",
                 "zeroRecords" : "Menu registro encontrado !",
                 "info": "Página _PAGE_ de _PAGES_",
+                "search":"Pesquisar:",
                 "paginate":{
                     "first":"Primeiro",
                     "last": "Último",

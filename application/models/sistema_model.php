@@ -9,6 +9,10 @@ class Sistema_Model extends CI_Model
 		parent::__contruct();
 	}
 
+	public function getAll(){
+
+		return $this->db->get("od_ordem_de_servico")->result();
+	}
 	public function lista_os()
 	{
 		//DEFININDO FUSO HORÁRIO
@@ -59,5 +63,9 @@ class Sistema_Model extends CI_Model
 
 	public function historicoOrdemServico(){
 		return $this->db->get('log_ordem_de_servico')->result();
+	}
+
+	public function remove($id){
+		return $this->db->delete("od_ordem_de_servico", array('id' => $id));
 	}
 }
