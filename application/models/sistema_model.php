@@ -8,24 +8,36 @@ class Sistema_Model extends CI_Model
 	{
 		parent::__contruct();
 	}
-
-	public function getAll(){
+	/**
+	 * 
+	 * RECUPERANDO TODAS AS ORDENS DE SERVIÇO
+	 * 
+	 */
+	public function getAll()
+	{
 
 		return $this->db->get("od_ordem_de_servico")->result();
 	}
+	/**
+	 * 
+	 * LISTA DE OS BASEADO NO DIA ATUAL
+	 * 
+	 */
 	public function lista_os()
 	{
-		//DEFININDO FUSO HORÁRIO
+		date_default_timezone_set("America/Recife");		//DEFININDO FUSO HORÁRIO
 
-		date_default_timezone_set("America/Recife");
-		//
-		$dataAtual = date('Y-m-d');
+		$dataAtual = date('Y-m-d');		//RECUPERANDO O DIA ATUAL PARA VERIFICAR NO WHERE
+
 		$this->db->where('data_proximo_servico', $dataAtual);
-//		$this->db->where('data_proximo_servico', '2019-07-15');
-
 		return $this->db->get('od_ordem_de_servico')->result();
 	}
 
+	/**
+	 * 
+	 * CADASTRO DE ORDEM DE SERVIÇO
+	 * 
+	 */
 	public function addOs($id, $equipamento, $servico, $dateOpen, $dataPrevista, $periodo, $status)
 	{
 		$dados['id'] = $id;
@@ -37,7 +49,11 @@ class Sistema_Model extends CI_Model
 		$dados['status'] = $status;
 		return $this->db->insert('od_ordem_de_servico', $dados);
 	}
-
+	/**
+	 * 
+	 * ATUALIZAR OS
+	 * 
+	 */
 	public function atualizarOs($id, $status, $datarealizacao, $data_prox_servico, $staus_prox_servico)
 	{
 		$this->db->where('id', $id);
@@ -47,13 +63,37 @@ class Sistema_Model extends CI_Model
 		$this->db->set('status', $status);
 		return $this->db->update('od_ordem_de_servico');
 	}
-
-	public function getOneOs($id){
+	/**
+	 * 
+	 * ATUALIZAR OS 2
+	 * 
+	 */
+	public function atualizarOs2($id, $equipamento, $servico, $dataOpen, $dataPrevista, $periodo){
+		$this->db->where('id', $id);
+		$this->db->set('equipamento', $equipamento);
+		$this->db->set('servico', $servico);
+		$this->db->set('data_pedido', $dataOpen);
+		$this->db->set('data_proximo_servico', $dataPrevista);
+		$this->db->set('periodo', $periodo);
+		return $this->db->update('od_ordem_de_servico');
+	}
+	/**
+	 * 
+	 * RECUPERAR SOMENTE UMA OS
+	 * 
+	 */
+	public function getOneOs($id)
+	{
 		$this->db->where("id", $id);
 		return $this->db->get("od_ordem_de_servico")->result();
 	}
-
-	public function logOrdemServico($identificador, $equipamento, $servico, $datarealizacao){
+	/**
+	 * 
+	 * GERANDO HISTÓRICO DE SERVIÇO
+	 * 
+	 */
+	public function logOrdemServico($identificador, $equipamento, $servico, $datarealizacao)
+	{
 		$dados['id'] = $identificador;
 		$dados['equipamento'] = $equipamento;
 		$dados['servico'] = $servico;
@@ -61,11 +101,22 @@ class Sistema_Model extends CI_Model
 		return $this->db->insert("log_ordem_de_servico", $dados);
 	}
 
-	public function historicoOrdemServico(){
+	/**
+	 * 
+	 * RESGATANDO HISTÓRICO DE SERVIÇOS
+	 * 
+	 */
+	public function historicoOrdemServico()
+	{
 		return $this->db->get('log_ordem_de_servico')->result();
 	}
-
-	public function remove($id){
+	/**
+	 * 
+	 * EXCLUINDO ORDEM DE SERVIÇO
+	 * 
+	 */
+	public function remove($id)
+	{
 		return $this->db->delete("od_ordem_de_servico", array('id' => $id));
 	}
 }

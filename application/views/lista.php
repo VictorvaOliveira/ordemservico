@@ -6,12 +6,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-  <!--<script type="text/javascript" scr="conteudo/js/sortTable.js"></script>
-   <link rel="stylesheet" href="conteudo/css/mainpage.css"> -->
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+  <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 </head>
 <style>
   thead {
@@ -54,12 +52,6 @@
       <div class="col-md-1">
         <p />
       </div>
-      <div class="col-md-4">
-        <div class="input-group">
-          <span class="input-group-addon">Código Ordem de Serviço</span>
-          <input type="text" name="inputID" id="inputID" onkeyup="pesquisaID()" class="form-control" placeholder="Exemplo: 1, 2, 3">
-        </div>
-      </div>
     </div>
   </div>
   </div>
@@ -88,7 +80,7 @@
                 <th>Equipamento</th>
                 <th>Serviço</th>
                 <th>Data prevista</th>
-                <th onclick="ordenarStatus(4)">Status</th>
+                <th>Status</th>
                 <th></th>
               </tr>
             </thead>
@@ -102,16 +94,13 @@
                     <td><?php echo $lista->equipamento ?></td>
                     <td><?php echo $lista->servico ?></td>
                     <td><?php echo date("d/m/Y", strtotime($lista->data_proximo_servico)); ?></td>
-                    <!-- <td><?php echo $lista->data_proximo_servico; ?></td> -->
                     <td><?php echo $lista->status_proximo_servico ?></td>
                     <td><?php echo "<a href='projeto/atualizar/$lista->id' class='btn btn-success' data-toggle='tooltip' title='Confirmar'><span class='glyphicon glyphicon-ok'></span></a>"; ?></td>
                   </tr>
                 <?php }
-              } else { ?>
+              }  ?>
               </tbody>
             </table>
-            <span class="col-md-12 text-center">Não há manutenção para hoje !</span>
-          <?php } ?>
           </tbody>
           </table>
         </div>
@@ -120,83 +109,22 @@
   </div>
 </body>
 <script>
-  function ordenarStatus(n) {
-    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-    table = document.getElementById("tableOS");
-    switching = true;
-    //Set the sorting direction to ascending:
-    dir = "asc";
-    /*Make a loop that will continue until
-    no switching has been done:*/
-    while (switching) {
-      //start by saying: no switching is done:
-      switching = false;
-      rows = table.rows;
-      /*Loop through all table rows (except the
-      first, which contains table headers):*/
-      for (i = 1; i < (rows.length - 1); i++) {
-        //start by saying there should be no switching:
-        shouldSwitch = false;
-        console.log(rows);
-        /*Get the two elements you want to compare,
-        one from current row and one from the next:*/
-        x = rows[i].getElementsByTagName("TD")[n];
-        y = rows[i + 1].getElementsByTagName("TD")[n];
-        /*check if the two rows should switch place,
-        based on the direction, asc or desc:*/
-        if (dir == "asc") {
-          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-            //if so, mark as a switch and break the loop:
-            shouldSwitch = true;
-            break;
-          }
-        } else if (dir == "desc") {
-          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-            //if so, mark as a switch and break the loop:
-            shouldSwitch = true;
-            break;
-          }
+  $(document).ready(function() {
+    $('#tableOS').DataTable({
+      "language": {
+        "lengthMenu": "_MENU_ Ordens de serviço por página",
+        "zeroRecords": "Menu registro encontrado !",
+        "info": "Página _PAGE_ de _PAGES_",
+        "search": "Pesquisar:",
+        "paginate": {
+          "first": "Primeiro",
+          "last": "Último",
+          "next": "Próximo",
+          "previous": "Anterior"
         }
       }
-      if (shouldSwitch) {
-        /*If a switch has been marked, make the switch
-        and mark that a switch has been done:*/
-        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-        switching = true;
-        //Each time a switch is done, increase this count by 1:
-        switchcount++;
-      } else {
-        /*If no switching has been done AND the direction is "asc",
-        set the direction to "desc" and run the while loop again.*/
-        if (switchcount == 0 && dir == "asc") {
-          dir = "desc";
-          switching = true;
-        }
-      }
-    }
-  }
-
-  function pesquisaID() {
-
-    var input, filter, table, tr, td, i, txtValue;
-
-    input = document.getElementById("inputID");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("tableOS");
-    tr = table.getElementsByTagName("tr");
-
-    for (i = 0; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("td")[0];
-      if (td) {
-        txtValue = td.textContent || td.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-          tr[i].style.display = "";
-        } else {
-          tr[i].style.display = "none"
-        }
-      }
-    }
-  }
+    });
+  });
 
   $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
